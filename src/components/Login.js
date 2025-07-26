@@ -16,7 +16,7 @@ const Login = () => {
   const handleLogin = async () => {
     setError('');
     try {
-      const res = await axios.post('http://43.204.142.97:5000/api/login', form);
+      const res = await axios.post('https://employeesapi.devopspedia.online/api/login', form);
       // pass single object
       login({ token: res.data.token, role: res.data.role });
 

@@ -18,7 +18,7 @@ const Home = () => {
     setError('');
 
     try {
-      const res = await axios.get('http://43.204.142.97:5000/api/attendance', {
+      const res = await axios.get('https://employeesapi.devopspedia.online/api/attendance', {
         headers: { Authorization: `Bearer ${auth.token}` },
       });
 
@@ -55,7 +55,7 @@ const Home = () => {
     setError('');
     try {
       const res = await axios.post(
-        'http://43.204.142.97:5000/api/clock-in',
+        'https://employeesapi.devopspedia.online/api/clock-in',
         {},
         { headers: { Authorization: `Bearer ${auth.token}` } }
       );
@@ -71,7 +71,7 @@ const Home = () => {
     setError('');
     try {
       const res = await axios.post(
-        'http://43.204.142.97:5000/api/clock-out',
+        'https://employeesapi.devopspedia.online/api/clock-out',
         {},
         { headers: { Authorization: `Bearer ${auth.token}` } }
       );

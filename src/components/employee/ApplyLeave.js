@@ -25,7 +25,7 @@ const ApplyLeave = () => {
   useEffect(() => {
     const fetchLeaveUsage = async () => {
       try {
-        const res = await axios.get('http://43.204.142.97:5000/api/leaves', {
+        const res = await axios.get('https://employeesapi.devopspedia.online/api/leaves', {
           headers: { Authorization: `Bearer ${auth.token}` },
         });
 
@@ -79,7 +79,7 @@ const ApplyLeave = () => {
       const end_date = endDateObj.toISOString().slice(0, 10);
 
       await axios.post(
-        'http://43.204.142.97:5000/api/leaves/apply',
+        'https://employeesapi.devopspedia.online/api/leaves/apply',
         {
           leave_type: leaveType === 'casual' ? 'Casual Leave' : 'Sick Leave',
           start_date,
@@ -96,7 +96,7 @@ const ApplyLeave = () => {
       setReason('');
 
       // Refresh usage and leave requests after apply
-      const res = await axios.get('http://43.204.142.97:5000/api/leaves', {
+      const res = await axios.get('https://employeesapi.devopspedia.online/api/leaves', {
         headers: { Authorization: `Bearer ${auth.token}` },
       });
 

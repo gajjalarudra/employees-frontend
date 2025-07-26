@@ -22,7 +22,7 @@ const AdminDashboard = () => {
 
   const fetchEmployees = async () => {
     try {
-      const res = await axios.get('http://43.204.142.97:5000/api/employees', {
+      const res = await axios.get('https://employeesapi.devopspedia.online/api/employees', {
         headers: { Authorization: `Bearer ${auth.token}` },
       });
       setEmployees(res.data);
@@ -35,10 +35,10 @@ const AdminDashboard = () => {
     setLoadingApprovals(true);
     try {
       const [leaveRes, clockinRes] = await Promise.all([
-        axios.get('http://43.204.142.97:5000/api/leave-requests', {
+        axios.get('https://employeesapi.devopspedia.online/api/leave-requests', {
           headers: { Authorization: `Bearer ${auth.token}` },
         }),
-        axios.get('http://43.204.142.97:5000/api/clockin-requests', {
+        axios.get('https://employeesapi.devopspedia.online/api/clockin-requests', {
           headers: { Authorization: `Bearer ${auth.token}` },
         }),
       ]);
@@ -63,12 +63,12 @@ const AdminDashboard = () => {
     e.preventDefault();
     try {
       if (editingId) {
-        await axios.put(`http://43.204.142.97:5000/api/employees/${editingId}`, form, {
+        await axios.put(`https://employeesapi.devopspedia.online/api/employees/${editingId}`, form, {
           headers: { Authorization: `Bearer ${auth.token}` },
         });
         setEditingId(null);
       } else {
-        await axios.post('http://43.204.142.97:5000/api/employees', form, {
+        await axios.post('https://employeesapi.devopspedia.online/api/employees', form, {
           headers: { Authorization: `Bearer ${auth.token}` },
         });
       }
@@ -97,7 +97,7 @@ const AdminDashboard = () => {
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this employee?')) {
-      await axios.delete(`http://43.204.142.97:5000/api/employees/${id}`, {
+      await axios.delete(`https://employeesapi.devopspedia.online/api/employees/${id}`, {
         headers: { Authorization: `Bearer ${auth.token}` },
       });
       fetchEmployees();
@@ -106,7 +106,7 @@ const AdminDashboard = () => {
 
   const approveLeave = async (id) => {
     try {
-      await axios.post(`http://43.204.142.97:5000/api/leave-requests/${id}/approve`, {}, {
+      await axios.post(`https://employeesapi.devopspedia.online/api/leave-requests/${id}/approve`, {}, {
         headers: { Authorization: `Bearer ${auth.token}` },
       });
       setLeaveRequests((prev) => prev.filter((req) => req.id !== id));
@@ -118,22 +118,22 @@ const AdminDashboard = () => {
 
   const approveClockin = async (id) => {
     try {
-      await axios.post(`http://43.204.142.97:5000/api/clockin-requests/${id}/approve`, {}, {
+      await axios.post(`https://employeesapi.devopspedia.online/api/clockin-requests/${id}/approve`, {}, {
         headers: { Authorization: `Bearer ${auth.token}` },
       });
       setClockinRequests((prev) => prev.filter((req) => req.id !== id));
       alert('Clock-in request approved!');
     } catch (err) {
-      alert('Failed to approve clock-in request.');
+      aert('Failed to approve clock-in request.');
     }
   };
 
-  return (
+ return (
     <>
       <Navbar />
 
-      {/* Sidebar */}
-      <div className="sidebar">
+     {/* Sidebar */}
+     <div className="sidebar">
         {[
           { key: 'home', label: '🏠 Home' },
           { key: 'add', label: '➕ Add Employee' },

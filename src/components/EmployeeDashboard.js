@@ -21,7 +21,7 @@ const EmployeeDashboard = () => {
     if (!auth?.token) return;
     setLoadingAttendance(true);
     try {
-      const res = await axios.get('http://43.204.142.97:5000/api/attendance', {
+      const res = await axios.get('https://employeesapi.devopspedia.online/api/attendance', {
         headers: { Authorization: `Bearer ${auth.token}` },
       });
       setAttendanceLogs(res.data);

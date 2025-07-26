@@ -15,7 +15,7 @@ const EmployeeLogin = () => {
   e.preventDefault();
   setError('');
   try {
-    const res = await axios.post('http://43.204.142.97:5000/api/employee-login', form);
+    const res = await axios.post('https://employeesapi.devopspedia.online/api/employee-login', form);
     login(res.data);  // res.data must be { token: "...", role: "employee" }
     navigate('/employee');
   } catch (err) {

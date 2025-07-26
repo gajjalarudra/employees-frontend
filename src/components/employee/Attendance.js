@@ -9,12 +9,12 @@ const Attendance = ({ attendanceLogs, clockedIn, loading, fetchAttendance, updat
   const handleClockIn = async () => {
     try {
       await axios.post(
-        'http://43.204.142.97:5000/api/clock-in',
+        'https://employeesapi.devopspedia.online/api/clock-in',
         {},
         { headers: { Authorization: `Bearer ${auth.token}` } }
       );
       alert('Clock-in successful');
-      const res = await axios.get('http://43.204.142.97:5000/api/attendance', {
+      const res = await axios.get('https://employeesapi.devopspedia.online/api/attendance', {
         headers: { Authorization: `Bearer ${auth.token}` },
       });
       const logs = res.data;
@@ -29,12 +29,12 @@ const Attendance = ({ attendanceLogs, clockedIn, loading, fetchAttendance, updat
   const handleClockOut = async () => {
     try {
       await axios.post(
-        'http://43.204.142.97:5000/api/clock-out',
+        'https://employeesapi.devopspedia.online/api/clock-out',
         {},
         { headers: { Authorization: `Bearer ${auth.token}` } }
       );
       alert('Clock-out successful');
-      const res = await axios.get('http://43.204.142.97:5000/api/attendance', {
+      const res = await axios.get('https://employeesapi.devopspedia.online/api/attendance', {
         headers: { Authorization: `Bearer ${auth.token}` },
       });
       const logs = res.data;

@@ -9,7 +9,7 @@ const AdminHome = () => {
   useEffect(() => {
     const fetchCount = async () => {
       try {
-        const res = await axios.get('http://43.204.142.97:5000/api/employees', {
+        const res = await axios.get('https://employeesapi.devopspedia.online/api/employees', {
           headers: { Authorization: `Bearer ${auth.token}` },
         });
         setEmployeeCount(res.data.length);

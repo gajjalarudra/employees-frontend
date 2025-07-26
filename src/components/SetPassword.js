@@ -35,7 +35,7 @@ const SetPassword = () => {
     }
 
     try {
-      await axios.post('http://43.204.142.97:5000/api/set-password', {
+      await axios.post('https://employeesapi.devopspedia.online/api/set-password', {
         employeeId,
         password: form.password,
       });

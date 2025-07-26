@@ -12,7 +12,7 @@ const MyFinance = () => {
     setLoading(true);
     setError('');
     try {
-      const res = await axios.get('http://43.204.142.97:5000/api/employees/me', {
+      const res = await axios.get('https://employeesapi.devopspedia.online/api/employees/me', {
         headers: { Authorization: `Bearer ${auth.token}` },
       });
       setSalary(res.data.salary);
