@@ -1,20 +1,24 @@
+// Updated AdminDashboard.js – modern layout, transparent sidebar, colorful home
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
-import Navbar from './Navbar';  // Correct import for default export
+import Navbar from './Navbar';
+import './AdminDashboard.css'; // Include this new CSS file
 
 const AdminDashboard = () => {
   const { auth } = useContext(AuthContext);
+  const [page, setPage] = useState('home');
+
   const [employees, setEmployees] = useState([]);
   const [form, setForm] = useState({
-    name: '',
-    username: '',
-    email: '',
-    salary: '',
-    designation: '',
-    joining_date: '',
+    name: '', username: '', email: '', salary: '',
+    designation: '', joining_date: '',
   });
   const [editingId, setEditingId] = useState(null);
+
+  const [leaveRequests, setLeaveRequests] = useState([]);
+  const [clockinRequests, setClockinRequests] = useState([]);
+  const [loadingApprovals, setLoadingApprovals] = useState(false);
 
   const fetchEmployees = async () => {
     try {
@@ -27,8 +31,30 @@ const AdminDashboard = () => {
     }
   };
 
+  const fetchApprovals = async () => {
+    setLoadingApprovals(true);
+    try {
+      const [leaveRes, clockinRes] = await Promise.all([
+        axios.get('http://43.204.142.97:5000/api/leave-requests', {
+          headers: { Authorization: `Bearer ${auth.token}` },
+        }),
+        axios.get('http://43.204.142.97:5000/api/clockin-requests', {
+          headers: { Authorization: `Bearer ${auth.token}` },
+        }),
+      ]);
+      setLeaveRequests(leaveRes.data);
+      setClockinRequests(clockinRes.data);
+    } catch (err) {
+      console.error('Error fetching approvals:', err);
+    }
+    setLoadingApprovals(false);
+  };
+
   useEffect(() => {
-    if (auth?.token) fetchEmployees();
+    if (auth?.token) {
+      fetchEmployees();
+      fetchApprovals();
+    }
   }, [auth]);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
@@ -47,14 +73,10 @@ const AdminDashboard = () => {
         });
       }
       setForm({
-        name: '',
-        username: '',
-        email: '',
-        salary: '',
-        designation: '',
-        joining_date: '',
+        name: '', username: '', email: '', salary: '', designation: '', joining_date: '',
       });
       fetchEmployees();
+      setPage('list');
     } catch (err) {
       console.error('Error saving employee:', err);
     }
@@ -70,6 +92,7 @@ const AdminDashboard = () => {
       joining_date: emp.joining_date ? emp.joining_date.substring(0, 10) : '',
     });
     setEditingId(emp.id);
+    setPage('add');
   };
 
   const handleDelete = async (id) => {
@@ -81,191 +104,222 @@ const AdminDashboard = () => {
     }
   };
 
+  const approveLeave = async (id) => {
+    try {
+      await axios.post(`http://43.204.142.97:5000/api/leave-requests/${id}/approve`, {}, {
+        headers: { Authorization: `Bearer ${auth.token}` },
+      });
+      setLeaveRequests((prev) => prev.filter((req) => req.id !== id));
+      alert('Leave request approved!');
+    } catch (err) {
+      alert('Failed to approve leave request.');
+    }
+  };
+
+  const approveClockin = async (id) => {
+    try {
+      await axios.post(`http://43.204.142.97:5000/api/clockin-requests/${id}/approve`, {}, {
+        headers: { Authorization: `Bearer ${auth.token}` },
+      });
+      setClockinRequests((prev) => prev.filter((req) => req.id !== id));
+      alert('Clock-in request approved!');
+    } catch (err) {
+      alert('Failed to approve clock-in request.');
+    }
+  };
+
   return (
     <>
       <Navbar />
 
-      <div
-        className="min-vh-100 p-4 pt-5" // add pt-5 to avoid navbar overlap
-        style={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          color: '#fff',
-          fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-        }}
-      >
-        <div className="container">
-          <h1
-            className="mb-4 text-center fw-bold"
-            style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.4)' }}
+      {/* Sidebar */}
+      <div className="sidebar">
+        {[
+          { key: 'home', label: '🏠 Home' },
+          { key: 'add', label: '➕ Add Employee' },
+          { key: 'list', label: '📋 Employee List' },
+          { key: 'requests', label: '📨 Requests' },
+        ].map(({ key, label }) => (
+          <button
+            key={key}
+            className={`sidebar-btn ${page === key ? 'active' : ''}`}
+            onClick={() => setPage(key)}
           >
-            Admin Dashboard - Employee Management
-          </h1>
+            {label}
+          </button>
+        ))}
+      </div>
 
-          {/* Form Card */}
-          <div
-            className="card p-4 mb-5 shadow-lg"
-            style={{ backgroundColor: 'rgba(255,255,255,0.95)', color: '#333' }}
-          >
-            <h3 className="mb-4 text-center text-primary">
-              {editingId ? 'Edit Employee' : 'Add New Employee'}
-            </h3>
-            <form onSubmit={handleSubmit}>
-              <div className="row g-3">
-                <div className="col-md-6">
-                  <input
-                    type="text"
-                    name="name"
-                    className="form-control"
-                    placeholder="Full Name"
-                    value={form.name}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="col-md-6">
-                  <input
-                    type="text"
-                    name="username"
-                    className="form-control"
-                    placeholder="Username"
-                    value={form.username}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="col-md-6">
-                  <input
-                    type="email"
-                    name="email"
-                    className="form-control"
-                    placeholder="Email"
-                    value={form.email}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="col-md-6">
-                  <input
-                    type="number"
-                    name="salary"
-                    className="form-control"
-                    placeholder="Salary (₹)"
-                    value={form.salary}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="col-md-6">
-                  <input
-                    type="text"
-                    name="designation"
-                    className="form-control"
-                    placeholder="Designation"
-                    value={form.designation}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="col-md-6">
-                  <input
-                    type="date"
-                    name="joining_date"
-                    className="form-control"
-                    value={form.joining_date}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className="btn btn-gradient btn-lg mt-4 w-100 fw-semibold"
-                style={{
-                  backgroundImage: 'linear-gradient(to right, #667eea, #764ba2)',
-                  color: 'white',
-                  border: 'none',
-                  boxShadow: '0 4px 15px rgba(102, 126, 234, 0.6)',
-                  transition: 'background-image 0.3s ease',
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.backgroundImage = 'linear-gradient(to right, #5a6edc, #693f91)')
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.backgroundImage = 'linear-gradient(to right, #667eea, #764ba2)')
-                }
-              >
-                {editingId ? 'Update Employee' : 'Add Employee'}
-              </button>
-            </form>
-          </div>
-
-          {/* Employees List */}
-          <h3 className="mb-4 text-center text-white text-shadow">Employee List</h3>
-          <div className="row gy-4">
-            {employees.length === 0 ? (
-              <div className="col-12">
-                <div
-                  className="p-5 text-center rounded shadow"
-                  style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: 'white' }}
-                >
-                  No employees found
-                </div>
-              </div>
-            ) : (
-              employees.map((emp) => (
-                <div key={emp.id} className="col-sm-12 col-md-6 col-lg-4">
-                  <div
-                    className="card h-100 shadow"
-                    style={{
-                      borderRadius: '15px',
-                      backgroundColor: 'rgba(255,255,255,0.85)',
-                      color: '#333',
-                      transition: 'transform 0.3s ease',
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-                    onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-                  >
-                    <div className="card-body">
-                      <h5 className="card-title fw-bold text-primary">{emp.name}</h5>
-                      <p className="card-text mb-1">
-                        <strong>Username:</strong> {emp.username}
-                      </p>
-                      <p className="card-text mb-1">
-                        <strong>Email:</strong> {emp.email}
-                      </p>
-                      <p className="card-text mb-1">
-                        <strong>Salary:</strong> ₹{emp.salary}
-                      </p>
-                      <p className="card-text mb-1">
-                        <strong>Designation:</strong> {emp.designation || '-'}
-                      </p>
-                      <p className="card-text mb-3">
-                        <strong>Joining Date:</strong> {emp.joining_date ? emp.joining_date.substring(0, 10) : '-'}
-                      </p>
-
-                      <div className="d-flex justify-content-between">
-                        <button
-                          className="btn btn-sm btn-outline-primary"
-                          onClick={() => handleEdit(emp)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="btn btn-sm btn-outline-danger"
-                          onClick={() => handleDelete(emp.id)}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
+      {/* Main Content */}
+      <div className="main-content">
+  {page === 'home' && (
+    <div className="home-container">
+      <h1>Welcome to Admin Dashboard</h1>
+      <div className="summary-box">
+        <h3>👥 Employee Summary</h3>
+        <p>Total Employees: <strong>{employees.length}</strong></p>
+      </div>
+      <div className="grid">
+        <div className="card note">
+          <h4>📝 HR Notes</h4>
+          <ul>
+            <li>Keep employee info updated</li>
+            <li>Approve leave/clock-in requests</li>
+            <li>Manage onboarding & payroll</li>
+          </ul>
+        </div>
+        <div className="card motivation">
+          <h4>🚀 Motivation</h4>
+          <p>"Your team is your power. Empower them to grow, and the company grows with them!"</p>
+        </div>
+        <div className="card policy">
+          <h4>📚 Company Policy</h4>
+          <p>Adhere to working hours, ethics, and security. Transparency and respect are our culture.</p>
+        </div>
+        <div className="card announcement">
+          <h4>📢 Announcements</h4>
+          <ul>
+            <li>🏆 Monthly awards announced next Friday</li>
+            <li>🎉 Team outing on August 10</li>
+          </ul>
         </div>
       </div>
+    </div>
+  )}
+
+  {page === 'add' && (
+  <>
+    <h2 className="page-title">Add / Edit Employee</h2>
+    <form onSubmit={handleSubmit} className="form-card">
+      <div className="form-grid">
+        {[
+          { name: 'name', type: 'text', placeholder: 'Full Name', required: true },
+          { name: 'username', type: 'text', placeholder: 'Username', required: true },
+          { name: 'email', type: 'email', placeholder: 'Email', required: true },
+          { name: 'salary', type: 'number', placeholder: 'Salary (₹)', required: true },
+          { name: 'designation', type: 'text', placeholder: 'Designation', required: false },
+          { name: 'joining_date', type: 'date', placeholder: '', required: false },
+        ].map(({ name, type, placeholder, required }) => (
+          <div key={name} className="form-group">
+            <input
+              id={name}
+              name={name}
+              type={type}
+              value={form[name]}
+              onChange={handleChange}
+              required={required}
+              className="form-input"
+              placeholder=" "
+            />
+            <label htmlFor={name} className="form-label">
+              {placeholder || (name === 'joining_date' ? 'Joining Date' : name.charAt(0).toUpperCase() + name.slice(1))}
+            </label>
+          </div>
+        ))}
+      </div>
+
+      <button type="submit" className="btn-gradient">
+        {editingId ? 'Update Employee' : 'Add Employee'}
+      </button>
+    </form>
+  </>
+)}
+
+  {page === 'list' && (
+    <>
+      <h2>Employee List</h2>
+      <div className="row g-4">
+        {employees.length === 0 ? (
+          <p>No employees found.</p>
+        ) : (
+          employees.map((emp) => (
+            <div key={emp.id} className="col-md-6 col-lg-4">
+              <div className="card p-3 h-100 shadow" style={{ backgroundColor: 'white' }}>
+                <h5 className="fw-bold text-primary">{emp.name}</h5>
+                <p><strong>Username:</strong> {emp.username}</p>
+                <p><strong>Email:</strong> {emp.email}</p>
+                <p><strong>Salary:</strong> ₹{emp.salary}</p>
+                <p><strong>Designation:</strong> {emp.designation || '-'}</p>
+                <p><strong>Joining:</strong> {emp.joining_date?.substring(0, 10) || '-'}</p>
+                <div className="d-flex justify-content-between">
+                  <button className="btn btn-sm btn-outline-primary" onClick={() => handleEdit(emp)}>Edit</button>
+                  <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(emp.id)}>Delete</button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </>
+  )}
+
+  {page === 'requests' && (
+  <>
+    <h2 className="page-title">Pending Requests</h2>
+
+    <section className="request-section">
+      <h4>📅 Leave Requests</h4>
+      {loadingApprovals ? (
+        <p>Loading leave requests...</p>
+      ) : leaveRequests.length === 0 ? (
+        <p>No pending leave requests.</p>
+      ) : (
+        <div className="request-grid">
+          {leaveRequests.map((req) => (
+            <div key={req.id} className="request-card leave-request">
+              <div className="request-header">
+                <span className="request-type">Leave</span>
+                <button
+                  className="btn-approve"
+                  onClick={() => approveLeave(req.id)}
+                  title="Approve Leave"
+                >
+                  ✓ Approve
+                </button>
+              </div>
+              <p><strong>Employee:</strong> {req.employee_name || req.employee_username}</p>
+              <p><strong>Type:</strong> {req.leave_type}</p>
+              <p><strong>From:</strong> {req.start_date}</p>
+              <p><strong>To:</strong> {req.end_date}</p>
+              <p><strong>Reason:</strong> {req.reason}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+
+    <section className="request-section">
+      <h4>🕒 Clock-In Requests</h4>
+      {loadingApprovals ? (
+        <p>Loading clock-in requests...</p>
+      ) : clockinRequests.length === 0 ? (
+        <p>No pending clock-in requests.</p>
+      ) : (
+        <div className="request-grid">
+          {clockinRequests.map((req) => (
+            <div key={req.id} className="request-card clockin-request">
+              <div className="request-header">
+                <span className="request-type">Clock-In</span>
+                <button
+                  className="btn-approve"
+                  onClick={() => approveClockin(req.id)}
+                  title="Approve Clock-In"
+                >
+                  ✓ Approve
+                </button>
+              </div>
+              <p><strong>Employee:</strong> {req.employee_name || req.employee_username}</p>
+              <p><strong>Date:</strong> {req.date}</p>
+              <p><strong>Time:</strong> {req.clock_in}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  </>
+)}
+</div>
+
     </>
   );
 };

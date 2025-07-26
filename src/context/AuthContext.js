@@ -9,7 +9,8 @@ export const AuthProvider = ({ children }) => {
     return token ? { token, role } : null;
   });
 
-  const login = (token, role) => {
+  // Accept object {token, role}
+  const login = ({ token, role }) => {
     localStorage.setItem('token', token);
     localStorage.setItem('role', role);
     setAuth({ token, role });
@@ -19,8 +20,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.clear();
     setAuth(null);
   };
-
-  
 
   return (
     <AuthContext.Provider value={{ auth, login, logout }}>
