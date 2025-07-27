@@ -182,6 +182,7 @@
   margin-bottom: 1.3em;
   background: linear-gradient(90deg,#2065c3,#36d1c4);
   -webkit-background-clip: text;
+  background-clip: text;
   color: transparent;
   font-size: 2em;
   letter-spacing: -0.7px;
