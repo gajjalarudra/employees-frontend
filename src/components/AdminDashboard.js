@@ -124,7 +124,7 @@ const AdminDashboard = () => {
       setClockinRequests((prev) => prev.filter((req) => req.id !== id));
       alert('Clock-in request approved!');
     } catch (err) {
-      aert('Failed to approve clock-in request.');
+      alert('Failed to approve clock-in request.');
     }
   };
 
