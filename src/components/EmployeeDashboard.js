@@ -1,4 +1,3 @@
-// src/components/EmployeeDashboard.js
 import React, { useContext, useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
@@ -13,8 +12,10 @@ const EmployeeDashboard = () => {
   const { logout, auth } = useContext(AuthContext);
 
   const [attendanceLogs, setAttendanceLogs] = useState([]);
+  const [leaves, setLeaves] = useState([]); // New: store leaves with rejection info
   const [clockedIn, setClockedIn] = useState(false);
   const [loadingAttendance, setLoadingAttendance] = useState(false);
+  const [loadingLeaves, setLoadingLeaves] = useState(false); // Loading state for leaves
 
   // Fetch attendance records from backend
   const fetchAttendance = async () => {
@@ -36,8 +37,26 @@ const EmployeeDashboard = () => {
     setLoadingAttendance(false);
   };
 
+  // Fetch leaves from backend
+  const fetchLeaves = async () => {
+    if (!auth?.token) return;
+    setLoadingLeaves(true);
+    try {
+      const res = await axios.get('https://employeesapi.devopspedia.online/api/leaves', {
+        headers: { Authorization: `Bearer ${auth.token}` },
+      });
+      setLeaves(res.data);
+    } catch (err) {
+      console.error('Failed to fetch leaves:', err);
+      setLeaves([]);
+    }
+    setLoadingLeaves(false);
+  };
+
+  // Fetch both attendance and leaves when auth changes
   useEffect(() => {
     fetchAttendance();
+    fetchLeaves();
   }, [auth]);
 
   // Handler to update attendance state after clock-in/out
@@ -56,9 +75,12 @@ const EmployeeDashboard = () => {
             element={
               <Home
                 attendanceLogs={attendanceLogs}
+                leaves={leaves}               // pass leaves here too, you can show leave summary in Home if you want
                 clockedIn={clockedIn}
-                loading={loadingAttendance}
+                loadingAttendance={loadingAttendance}
+                loadingLeaves={loadingLeaves}
                 fetchAttendance={fetchAttendance}
+                fetchLeaves={fetchLeaves}
                 updateAttendanceState={updateAttendanceState}
               />
             }
@@ -75,7 +97,16 @@ const EmployeeDashboard = () => {
               />
             }
           />
-          <Route path="apply-leave" element={<ApplyLeave />} />
+          <Route
+            path="apply-leave"
+            element={
+              <ApplyLeave
+                leaves={leaves}             // pass leaves to ApplyLeave so you can display leave statuses and rejection reasons
+                loadingLeaves={loadingLeaves}
+                fetchLeaves={fetchLeaves}
+              />
+            }
+          />
           <Route path="my-finance" element={<MyFinance />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

@@ -1,3 +1,4 @@
+/* ===== SIDEBAR ===== */
 .sidebar {
   position: fixed;
   top: 56px;
@@ -13,16 +14,17 @@
 }
 
 .sidebar-btn {
-  background: transparent;
+  position: relative;
+  font-weight: bold;
   border: none;
+  background: transparent;
   color: #fff;
   padding: 1rem 2rem;
   text-align: left;
   font-size: 1rem;
-  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
   border-left: 4px solid transparent;
+  transition: all 0.3s ease;
 }
 
 .sidebar-btn:hover {
@@ -35,6 +37,18 @@
   border-left: 4px solid #764ba2;
 }
 
+.badge {
+  background: #ff3b3b;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 7px;
+  font-size: 12px;
+  position: relative;
+  top: -5px;
+  margin-left: 5px;
+}
+
+/* ===== MAIN CONTENT ===== */
 .main-content {
   margin-left: 220px;
   padding: 2rem;
@@ -53,11 +67,12 @@
   gap: 1.5rem;
 }
 
+/* ===== CARDS ===== */
 .card {
   background: white;
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   color: #333;
 }
 
@@ -72,7 +87,7 @@
   padding: 1rem;
   border-radius: 8px;
   margin-bottom: 2rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .page-title {
@@ -82,7 +97,7 @@
   color: #333;
 }
 
-/* ===== Add Employee form styles ===== */
+/* ===== FORM STYLES ===== */
 .form-card {
   background: #fff;
   padding: 2rem 2.5rem;
@@ -108,9 +123,9 @@
   border-radius: 8px;
   padding: 12px 16px;
   font-size: 1rem;
-  transition: border-color 0.3s ease;
   background: none;
   outline: none;
+  transition: border-color 0.3s ease;
 }
 
 .form-input:focus {
@@ -138,10 +153,9 @@
   font-size: 1rem;
   pointer-events: none;
   transition: 0.3s;
-  user-select: none;
 }
 
-/* Gradient button */
+/* ===== BUTTONS ===== */
 .btn-gradient {
   width: 100%;
   margin-top: 2rem;
@@ -161,74 +175,160 @@
   background-image: linear-gradient(90deg, #5568d6 0%, #5a3d8a 100%);
 }
 
-/* ===== Requests Page Styles ===== */
+.btn-approve {
+  background: #fff;
+  color: #28a745;
+  border: 1px solid #28a745;
+  font-size: 13px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: all 0.2s ease-in-out;
+}
 
-.request-section {
-  margin-top: 2rem;
+.btn-approve:hover {
+  background: #28a745;
+  color: white;
+}
+
+.btn-reject {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin-right: 8px;
+  transition: background 0.2s;
+}
+
+.btn-reject:hover {
+  background: #c82333;
+}
+
+/* ===== REQUEST SECTION ===== */
+.request-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  padding: 20px;
+}
+
+.request-container {
+  background: #fefefe;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  padding: 30px;
+  max-width: 1000px;
+  width: 100%;
+}
+
+.request-container h3 {
+  margin-bottom: 20px;
+  color: #333;
 }
 
 .request-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
 }
 
 .request-card {
-  background: #fff;
-  padding: 1.4rem 1.8rem;
-  border-radius: 14px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  color: #333;
-  position: relative;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
+  background: white;
+  color: #333;
 }
 
 .request-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(102, 126, 234, 0.3);
 }
 
-/* Request type tag */
+.leave-request {
+  background: linear-gradient(135deg, #ff7e5f, #feb47b);
+  color: white;
+}
+
+.clockin-request {
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  color: white;
+}
+
 .request-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 10px;
 }
 
 .request-type {
-  font-weight: 700;
-  font-size: 0.9rem;
-  padding: 6px 14px;
-  border-radius: 30px;
-  color: white;
-  user-select: none;
-  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 3px 8px;
+  border-radius: 6px;
 }
 
-.leave-request .request-type {
-  background-color: #3498db;
+/* ===== MODAL STYLING ===== */
+.modal-backdrop {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000; /* Increased z-index */
 }
 
-.clockin-request .request-type {
-  background-color: #2ecc71;
+.modal {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  z-index: 2001; /* Always on top */
 }
 
-/* Approve button */
-.btn-approve {
-  background-color: #667eea;
+.modal h3 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.modal textarea,
+.modal input[type="date"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1em;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.modal-buttons button:first-child {
+  background: #ccc;
   border: none;
-  padding: 6px 16px;
-  border-radius: 30px;
+  padding: 8px 16px;
+  border-radius: 5px;
+}
+
+.modal-buttons button:last-child {
+  background: #007bff;
   color: white;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(102, 126, 234, 0.5);
-  transition: background-color 0.3s ease;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
 }
 
-.btn-approve:hover {
-  background-color: #5568d6;
+.modal-buttons button:last-child:disabled {
+  background: #aaa;
 }
-
