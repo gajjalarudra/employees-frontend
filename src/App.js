@@ -1,9 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { AuthProvider, AuthContext } from './context/AuthContext';
 
+import Landing from './components/Landing'; // Landing page with new banner design
 import Login from './components/Login'; // Admin login
 import AdminDashboard from './components/AdminDashboard';
 import Profile from './components/Profile';
@@ -12,13 +13,15 @@ import EmployeeLogin from './components/EmployeeLogin';
 import SetPassword from './components/SetPassword';
 import EmployeeDashboard from './components/EmployeeDashboard';
 
+import './components/Landing.css';  // Import Landing.css globally or in Landing.js
+
 function App() {
   return (
     <AuthProvider>
       <Router>
         <Routes>
-          {/* 👇 Login selection directly here */}
-          <Route path="/" element={<LoginSelector />} />
+          {/* 👇 Use Landing as root / */}
+          <Route path="/" element={<Landing />} />
 
           {/* Admin Routes */}
           <Route path="/login" element={<Login />} />
@@ -28,47 +31,13 @@ function App() {
           {/* Employee Routes */}
           <Route path="/employee-login" element={<EmployeeLogin />} />
           <Route path="/set-password" element={<SetPassword />} />
-          <Route path="/employee/*" element={<PrivateRoute role="employee"><EmployeeDashboard /></PrivateRoute>}
-/>
+          <Route path="/employee/*" element={<PrivateRoute role="employee"><EmployeeDashboard /></PrivateRoute>} />
 
           {/* Catch-all redirect */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Router>
     </AuthProvider>
-  );
-}
-
-// 👇 Login Selector UI inside App.js
-function LoginSelector() {
-  const navigate = useNavigate();
-
-  return (
-    <div className="container text-center mt-5">
-      <h2 className="mb-4">Welcome to Employee Management System</h2>
-      <div className="row justify-content-center">
-        <div className="col-md-4 mb-3">
-          <div className="card shadow">
-            <div className="card-body">
-              <h4>Admin</h4>
-              <button className="btn btn-primary w-100 mt-3" onClick={() => navigate('/login')}>
-                Admin Login
-              </button>
-            </div>
-          </div>
-        </div>
-        <div className="col-md-4 mb-3">
-          <div className="card shadow">
-            <div className="card-body">
-              <h4>Employee</h4>
-              <button className="btn btn-success w-100 mt-3" onClick={() => navigate('/employee-login')}>
-                Employee Login
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 }
 
